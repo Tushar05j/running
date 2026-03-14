@@ -1,0 +1,386 @@
+/* ─── WRAPPER ──────────────────────────────────────────────────── */
+.rc-wrapper {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 15px;
+  color: #222;
+  line-height: 1.5;
+}
+
+/* ─── PAGE SHELL ───────────────────────────────────────────────── */
+.rc-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.rc-header {
+  margin-bottom: 24px;
+}
+.rc-header h1 {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.rc-subtitle {
+  color: #888;
+  font-size: 14px;
+  margin: 0;
+}
+
+.rc-loading,
+.rc-error,
+.rc-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: #888;
+  font-size: 15px;
+}
+.rc-error { color: #c0392b; }
+.rc-empty p { margin-bottom: 8px; }
+
+/* ─── BACK BUTTON ──────────────────────────────────────────────── */
+.rc-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid #ddd;
+  color: #444;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+.rc-back-btn:hover { background: #f5f5f5; border-color: #bbb; }
+
+/* ─── ROUTE LIST ───────────────────────────────────────────────── */
+.rc-route-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rc-route-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 18px 20px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+.rc-route-card:hover {
+  border-color: #e86d2e;
+  box-shadow: 0 2px 8px rgba(232, 109, 46, 0.12);
+}
+
+.rc-rank {
+  font-size: 20px;
+  font-weight: 700;
+  color: #e86d2e;
+  min-width: 36px;
+  text-align: center;
+}
+
+.rc-route-main {
+  flex: 1;
+  min-width: 0;
+}
+.rc-route-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rc-run-count {
+  font-size: 12px;
+  font-weight: 400;
+  background: #fff3ec;
+  color: #e86d2e;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.rc-route-coords {
+  font-size: 12px;
+  color: #aaa;
+  font-family: monospace;
+  margin-bottom: 3px;
+}
+.rc-route-dates {
+  font-size: 12px;
+  color: #888;
+}
+
+.rc-route-stats {
+  display: flex;
+  gap: 20px;
+  flex-shrink: 0;
+}
+.rc-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 64px;
+}
+.rc-stat-label {
+  font-size: 11px;
+  color: #aaa;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+  white-space: nowrap;
+}
+.rc-stat-value {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.rc-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.rc-badge {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.rc-badge-hr { background: #fde8e8; color: #c0392b; }
+.rc-badge-cadence { background: #e8f5e9; color: #2e7d32; }
+
+.rc-arrow {
+  font-size: 18px;
+  color: #ccc;
+  flex-shrink: 0;
+}
+.rc-route-card:hover .rc-arrow { color: #e86d2e; }
+
+.rc-positive { color: #2e7d32; }
+.rc-negative { color: #c0392b; }
+
+/* ─── DETAIL HEADER ────────────────────────────────────────────── */
+.rc-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.rc-detail-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.rc-trend-badge {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 20px;
+  background: #f0f0f0;
+  color: #555;
+  white-space: nowrap;
+  align-self: center;
+}
+.rc-trend-badge.rc-positive { background: #e8f5e9; color: #2e7d32; }
+.rc-trend-badge.rc-negative { background: #fde8e8; color: #c0392b; }
+
+/* ─── SUMMARY GRID ─────────────────────────────────────────────── */
+.rc-summary-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.rc-summary-card {
+  flex: 1;
+  min-width: 110px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 14px 16px;
+  text-align: center;
+}
+.rc-summary-highlight {
+  border-color: #e86d2e;
+  background: #fff8f4;
+}
+.rc-summary-label {
+  font-size: 11px;
+  color: #999;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.rc-summary-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #222;
+}
+.rc-summary-value span {
+  font-size: 13px;
+  font-weight: 400;
+  color: #999;
+  margin-left: 2px;
+}
+.rc-summary-highlight .rc-summary-value { color: #e86d2e; }
+
+/* ─── TABS ─────────────────────────────────────────────────────── */
+.rc-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 0;
+}
+.rc-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  color: #888;
+  font-size: 14px;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: 0;
+  transition: color 0.15s, border-color 0.15s;
+}
+.rc-tab:hover { color: #e86d2e; }
+.rc-tab-active {
+  color: #e86d2e;
+  border-bottom-color: #e86d2e;
+  font-weight: 600;
+}
+
+/* ─── CHART SECTION ────────────────────────────────────────────── */
+.rc-chart-section {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.rc-chart-header {
+  margin-bottom: 16px;
+}
+.rc-chart-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.rc-chart-subtitle {
+  font-size: 13px;
+  color: #888;
+  margin: 0;
+}
+.rc-chart-note {
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 10px;
+}
+
+/* ─── CUSTOM TOOLTIP ───────────────────────────────────────────── */
+.rc-tooltip {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  min-width: 140px;
+}
+.rc-tooltip-label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #444;
+}
+.rc-tooltip-name {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 6px;
+}
+.rc-tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  color: #333;
+}
+.rc-tooltip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.rc-tooltip-unit { color: #999; }
+.rc-no-data { color: #bbb; font-style: italic; }
+
+/* ─── TABLE ────────────────────────────────────────────────────── */
+.rc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.rc-table th {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid #eee;
+  font-size: 12px;
+  color: #888;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.rc-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f5f5f5;
+}
+.rc-table tr:last-child td { border-bottom: none; }
+.rc-table tr:hover td { background: #fafafa; }
+.rc-table-num { color: #ccc; font-size: 12px; }
+.rc-best {
+  color: #2e7d32;
+  font-weight: 700;
+}
+
+/* ─── RESPONSIVE ───────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .rc-route-card { flex-wrap: wrap; }
+  .rc-route-stats { flex-wrap: wrap; gap: 12px; }
+  .rc-summary-grid { gap: 8px; }
+  .rc-summary-card { min-width: 90px; }
+  .rc-badges { flex-direction: row; flex-wrap: wrap; }
+}
+/* ADD THESE LINES TO YOUR EXISTING RouteComparison.css */
+
+/* ─── MAP ──────────────────────────────────────────────────────── */
+.rc-map-wrapper {
+  margin-bottom: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.rc-map {
+  width: 100%;
+  height: 280px;
+}
+
+.rc-map-note {
+  font-size: 12px;
+  color: #aaa;
+  padding: 8px 14px;
+  background: #fafafa;
+  border-top: 1px solid #eee;
+  margin: 0;
+}
