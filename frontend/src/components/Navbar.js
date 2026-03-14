@@ -1,16 +1,15 @@
 import { useState } from "react";
 import axios from "axios";
 
-function Navbar({ currentPage, onNavigate }) {
-  const [syncing, setSyncing]   = useState(false);
-  const [toast, setToast]       = useState(null);
+function Navbar({ currentPage, onNavigate, onLogout }) {
+  const [syncing, setSyncing] = useState(false);
+  const [toast, setToast]     = useState(null);
 
   const syncStrava = async () => {
     setSyncing(true);
     try {
       const res = await axios.get("http://localhost:5000/api/strava/activities");
       showToast(`✓ Synced ${res.data.count} activities`, "success");
-      // Refresh page data after sync
       window.dispatchEvent(new Event("strava-synced"));
     } catch {
       showToast("Sync failed. Check connection.", "error");
@@ -25,17 +24,21 @@ function Navbar({ currentPage, onNavigate }) {
   };
 
   const links = [
-    { key: "home",     label: "Home"      },
-    { key: "analyzer", label: "Analyzer"  },
-    { key: "routes",   label: "Routes"    },
-    { key: "predict",  label: "Predict"   },
+    { key: "home",     label: "Home"     },
+    { key: "analyzer", label: "Analyzer" },
+    { key: "routes",   label: "Routes"   },
+    { key: "predict",  label: "Predict"  },
   ];
 
   return (
     <>
       <nav className="navbar">
         {/* Logo */}
-        <div className="navbar-logo" onClick={() => onNavigate("home")} style={{ cursor: "pointer" }}>
+        <div
+          className="navbar-logo"
+          onClick={() => onNavigate("home")}
+          style={{ cursor: "pointer" }}
+        >
           PACE<span>IQ</span>
         </div>
 
@@ -54,6 +57,8 @@ function Navbar({ currentPage, onNavigate }) {
 
         {/* Right side */}
         <div className="navbar-right">
+
+          {/* Sync */}
           <button
             className="navbar-sync"
             onClick={syncStrava}
@@ -62,14 +67,22 @@ function Navbar({ currentPage, onNavigate }) {
             {syncing ? "Syncing..." : "↻ Sync"}
           </button>
 
-          {/* Avatar placeholder — first letter */}
-          <div className="navbar-avatar-placeholder">
-            R
-          </div>
+          {/* Logout */}
+          <button
+            className="navbar-logout"
+            onClick={onLogout}
+            title="Log out"
+          >
+            ⎋ Logout
+          </button>
+
+          {/* Avatar */}
+          <div className="navbar-avatar-placeholder">R</div>
+
         </div>
       </nav>
 
-      {/* Toast notification */}
+      {/* Toast */}
       {toast && (
         <div className={`sync-toast ${toast.type}`}>
           {toast.msg}

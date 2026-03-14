@@ -8,17 +8,17 @@ const RECORDS = [
   {
     distance: "10K",
     wr: { time: "26:24", holder: "Joshua Cheptegei", country: "Uganda", year: 2020 },
-    india: { time: "27:43", holder: "Avinash Sable", year: 2022 }
+    india: { time: "27:00", holder: "Gulveer Singh", year: 2022 }
   },
   {
     distance: "Half",
-    wr: { time: "57:31", holder: "Jacob Kiplimo", country: "Uganda", year: 2021 },
+    wr: { time: "57:20", holder: "Jacob Kiplimo", country: "Uganda", year: 2026 },
     india: { time: "1:00:30", holder: "Avinash Sable", year: 2023 }
   },
   {
     distance: "Marathon",
     wr: { time: "2:00:35", holder: "Kelvin Kiptum", country: "Kenya", year: 2023 },
-    india: { time: "2:12:10", holder: "Tata Mumbai", year: 2023 }
+    india: { time: "2:12:00", holder: "Shivnath Singh", year: 1978 }
   },
 ];
 

@@ -1101,3 +1101,22 @@ input, textarea, select { font-family: var(--font-body); }
   .home-page,
   .analyzer-page    { padding: 72px 16px 24px; }
 }
+.navbar-logout {
+  background: transparent;
+  border: 1px solid var(--border-bright);
+  color: var(--text-muted);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.navbar-logout:hover {
+  background: rgba(220, 50, 50, 0.08);
+  border-color: #c0392b;
+  color: #c0392b;
+}

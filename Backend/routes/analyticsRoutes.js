@@ -5,7 +5,7 @@ const Activity = require("../models/Activity");
 
 const ML_SERVICE = "http://localhost:5001";
 
-// ─── DASHBOARD ────────────────────────────────────────────────────────────────
+// DASHBOARD
 router.get("/dashboard", async (req, res) => {
   try {
     const activities = await Activity.find();
@@ -36,11 +36,11 @@ router.get("/dashboard", async (req, res) => {
   }
 });
 
-// ─── WEEKLY MILEAGE ───────────────────────────────────────────────────────────
+// WEEKLY MILEAGE
 router.get("/weekly-mileage", async (req, res) => {
   try {
-    const activities  = await Activity.find();
-    const weeklyData  = {};
+    const activities = await Activity.find();
+    const weeklyData = {};
 
     activities.forEach(run => {
       const date      = new Date(run.start_date);
@@ -63,7 +63,7 @@ router.get("/weekly-mileage", async (req, res) => {
   }
 });
 
-// ─── PACE TREND ───────────────────────────────────────────────────────────────
+// PACE TREND
 router.get("/pace-trend", async (req, res) => {
   try {
     const activities = await Activity.find({
@@ -89,30 +89,44 @@ router.get("/pace-trend", async (req, res) => {
   }
 });
 
-// ─── TRAINING LOAD ────────────────────────────────────────────────────────────
+// TRAINING LOAD
+// Fix 1: runs only (no cycling, walking etc)
+// Fix 2: ACWR = this week / avg week (chronic / 4)
 router.get("/training-load", async (req, res) => {
   try {
-    const activities = await Activity.find();
-    const today      = new Date();
-
-    let acuteLoad   = 0;
-    let chronicLoad = 0;
-
-    activities.forEach(run => {
-      const diffDays  = (today - new Date(run.start_date)) / (1000 * 60 * 60 * 24);
-      const distanceKm = run.distance / 1000;
-      if (diffDays <= 7)  acuteLoad   += distanceKm;
-      if (diffDays <= 28) chronicLoad += distanceKm;
+    const activities = await Activity.find({
+      $or: [
+        { type: { $in: ["Run", "VirtualRun"] } },
+        { type: { $exists: false } }
+      ]
     });
 
-    const acwr   = chronicLoad === 0 ? 0 : (acuteLoad / chronicLoad).toFixed(2);
-    let   status = "Optimal";
+    const today = new Date();
+
+    let acuteLoad        = 0;
+    let chronicLoadTotal = 0;
+
+    activities.forEach(run => {
+      const diffDays   = (today - new Date(run.start_date)) / (1000 * 60 * 60 * 24);
+      const distanceKm = run.distance / 1000;
+      if (diffDays <= 7)  acuteLoad        += distanceKm;
+      if (diffDays <= 28) chronicLoadTotal += distanceKm;
+    });
+
+    // Weekly average over last 4 weeks
+    const chronicWeeklyAvg = chronicLoadTotal / 4;
+
+    const acwr = chronicWeeklyAvg === 0
+      ? 0
+      : (acuteLoad / chronicWeeklyAvg).toFixed(2);
+
+    let status = "Optimal";
     if (acwr < 0.8) status = "Undertraining";
     if (acwr > 1.5) status = "High Injury Risk";
 
     res.json({
-      acuteLoad:   acuteLoad.toFixed(2),
-      chronicLoad: chronicLoad.toFixed(2),
+      acuteLoad:   acuteLoad.toFixed(2),        // this week km
+      chronicLoad: chronicWeeklyAvg.toFixed(2), // avg weekly km last 4 weeks
       acwr,
       status
     });
@@ -122,14 +136,11 @@ router.get("/training-load", async (req, res) => {
   }
 });
 
-// ─── EFFICIENCY ───────────────────────────────────────────────────────────────
-// Uses the SAME 3-tier HR blending as predictRoutes.js buildRunnerFeatures()
-// Primary: ML service at /efficiency-score
-// Fallback: formula using the same blended HR + pace values
+// EFFICIENCY
+// Same 3-tier HR blending as predictRoutes.js
+// Primary: ML service, Fallback: formula
 router.get("/efficiency", async (req, res) => {
   try {
-
-    // ── Step 1: Fetch last 50 runs (same as prediction) ──────────────────────
     const runs = await Activity.find().sort({ start_date: -1 }).limit(50);
 
     if (runs.length === 0) {
@@ -144,7 +155,6 @@ router.get("/efficiency", async (req, res) => {
       });
     }
 
-    // ── Step 2: Filter valid runs for pace (3–20km) ───────────────────────────
     const validRuns = runs.filter(r => {
       const km = r.distance / 1000;
       return km >= 3 && km <= 20;
@@ -155,20 +165,18 @@ router.get("/efficiency", async (req, res) => {
         mode:            "NO_DATA",
         efficiencyScore: 0,
         label:           "Not enough data",
-        tip:             "Need at least 2 runs between 3–20km.",
+        tip:             "Need at least 2 runs between 3-20km.",
         suggestion:      "Keep running and sync Strava",
         trend:           "Unknown",
         engine:          "none",
       });
     }
 
-    // ── Step 3: Pace values array (min/km) ───────────────────────────────────
     const paceValues = validRuns.map(r => {
       const km = r.distance / 1000;
       return parseFloat((r.moving_time / km / 60).toFixed(3));
     });
 
-    // ── Step 4: Training metrics (same calc as prediction) ───────────────────
     const now = new Date();
 
     const last4weeks = runs.filter(
@@ -178,31 +186,27 @@ router.get("/efficiency", async (req, res) => {
       r => (now - new Date(r.start_date)) / (1000 * 60 * 60 * 24) <= 42
     );
 
-    const weekly_mileage_km   = last4weeks.reduce((s, r) => s + r.distance / 1000, 0) / 4;
-    const runs_per_week       = last4weeks.length / 4;
-    const long_run_distance_km = last6weeks.length > 0
-      ? Math.max(...last6weeks.map(r => r.distance / 1000))
-      : 10;
+    const weekly_mileage_km      = last4weeks.reduce((s, r) => s + r.distance / 1000, 0) / 4;
+    const runs_per_week          = last4weeks.length / 4;
+    const long_run_distance_km   = last6weeks.length > 0
+      ? Math.max(...last6weeks.map(r => r.distance / 1000)) : 10;
     const training_adherence_pct = Math.min(100, (runs_per_week / 4) * 100);
 
-    // ── Step 5: Experience from oldest run (same as prediction) ──────────────
     const oldestRun = await Activity.findOne().sort({ start_date: 1 });
     const firstRunDate = oldestRun ? new Date(oldestRun.start_date) : now;
     const running_experience_months = Math.floor(
       (now - firstRunDate) / (1000 * 60 * 60 * 24 * 30)
     );
 
-    // ── Step 6: Best pace (for HR and VO2 estimation) ────────────────────────
     const allPaces = runs
       .filter(r => r.distance >= 5000)
       .map(r => r.moving_time / (r.distance / 1000));
     const bestPaceSecPerKm = allPaces.length > 0 ? Math.min(...allPaces) : 360;
 
-    // ── Step 7: EXACT same 3-tier HR blending as predictRoutes.js ────────────
+    // 3-tier HR blending (identical to predictRoutes.js)
     const hrRuns     = runs.filter(r => r.average_heartrate);
     const hrCoverage = runs.length > 0 ? hrRuns.length / runs.length : 0;
 
-    // Mileage-based HR estimate (Tier 3 base)
     const estimatedHR =
       weekly_mileage_km >= 60 ? 52
       : weekly_mileage_km >= 40 ? 57
@@ -214,22 +218,15 @@ router.get("/efficiency", async (req, res) => {
     let hrMode;
 
     if (hrCoverage >= 0.5) {
-      // Tier 1 — majority real HR data
-      resting_heart_rate_bpm = Math.round(
-        Math.min(...hrRuns.map(r => r.average_heartrate))
-      );
+      resting_heart_rate_bpm = Math.round(Math.min(...hrRuns.map(r => r.average_heartrate)));
       hrMode = "real";
 
     } else if (hrCoverage >= 0.2) {
-      // Tier 2 — partial data, weighted blend
       const realHR = Math.min(...hrRuns.map(r => r.average_heartrate));
-      resting_heart_rate_bpm = Math.round(
-        realHR * hrCoverage + estimatedHR * (1 - hrCoverage)
-      );
+      resting_heart_rate_bpm = Math.round(realHR * hrCoverage + estimatedHR * (1 - hrCoverage));
       hrMode = "blended";
 
     } else {
-      // Tier 3 — no HR data, multi-signal estimate from pace + mileage + experience
       const paceBasedHR =
         bestPaceSecPerKm <= 240 ? 48
         : bestPaceSecPerKm <= 270 ? 52
@@ -260,11 +257,9 @@ router.get("/efficiency", async (req, res) => {
       hrMode = "multi-signal";
     }
 
-    // ── Step 8: VO2 max (same formula as prediction) ─────────────────────────
     const bestSpeedKmH = 3600 / bestPaceSecPerKm;
     const vo2_max      = parseFloat((bestSpeedKmH * 3.5).toFixed(1));
 
-    // Speed work sessions (same logic as prediction)
     const avgPaceAll = allPaces.length > 0
       ? allPaces.reduce((a, b) => a + b, 0) / allPaces.length : 360;
     const speed_work_sessions = last4weeks.filter(r => {
@@ -272,16 +267,16 @@ router.get("/efficiency", async (req, res) => {
       return p < avgPaceAll * 0.85;
     }).length / 4;
 
-    console.log(`Efficiency HR mode: ${hrMode} (${Math.round(hrCoverage * 100)}% coverage) → ${resting_heart_rate_bpm}bpm | VO2: ${vo2_max}`);
+    console.log(`Efficiency HR mode: ${hrMode} (${Math.round(hrCoverage * 100)}% coverage) -> ${resting_heart_rate_bpm}bpm | VO2: ${vo2_max}`);
 
-    // ── Step 9: Try ML service ────────────────────────────────────────────────
+    // Try ML service
     try {
       const mlResponse = await axios.post(
         `${ML_SERVICE}/efficiency-score`,
         {
           pace_values:               paceValues,
-          resting_heart_rate_bpm,            // always a real number now (never null)
-          vo2_max,                           // always estimated (never null)
+          resting_heart_rate_bpm,
+          vo2_max,
           training_adherence_pct,
           weekly_mileage_km:         parseFloat(weekly_mileage_km.toFixed(1)),
           runs_per_week:             parseFloat(runs_per_week.toFixed(1)),
@@ -302,23 +297,18 @@ router.get("/efficiency", async (req, res) => {
         });
       }
     } catch (mlError) {
-      console.log("⚠️  ML efficiency unavailable, using formula fallback:", mlError.message);
+      console.log("ML efficiency unavailable, using formula fallback:", mlError.message);
     }
 
-    // ── Step 10: Formula fallback — uses same blended HR + pace ──────────────
+    // Formula fallback
     const avg      = paceValues.reduce((a, b) => a + b, 0) / paceValues.length;
     const variance = paceValues.reduce((s, p) => s + Math.pow(p - avg, 2), 0) / paceValues.length;
     const std      = Math.sqrt(variance);
 
-    // 1. Pace consistency  (30 pts) — lower std = better
     const consistencyPts = Math.max(0, 30 - std * 20);
-    // 2. Pace quality      (25 pts) — 4:00/km = 25pts, 8:00/km = 0pts
     const qualityPts     = Math.max(0, Math.min(25, 25 - (avg - 4.0) * 6.25));
-    // 3. HR efficiency     (25 pts) — same formula as prediction's HR logic
     const hrPts          = Math.max(0, Math.min(25, 25 - (resting_heart_rate_bpm - 40) * 0.625));
-    // 4. VO2 bonus         (10 pts) — higher VO2 = more efficient
     const vo2Pts         = Math.max(0, Math.min(10, (vo2_max - 30) * 0.4));
-    // 5. Adherence         (10 pts)
     const adherencePts   = (training_adherence_pct / 100) * 10;
 
     const score = Math.round(
@@ -331,7 +321,7 @@ router.get("/efficiency", async (req, res) => {
       : s >= 70
       ? "Try adding one tempo run per week to push your score above 85."
       : s >= 50
-      ? "Focus on running at an even effort — avoid starting too fast."
+      ? "Focus on running at an even effort - avoid starting too fast."
       : "Start with short, easy runs to build a consistent pace base.";
 
     return res.json({
@@ -343,7 +333,7 @@ router.get("/efficiency", async (req, res) => {
         ? "Score uses your real heart rate data."
         : hrMode === "blended"
         ? "Score uses partial HR data blended with pace estimate."
-        : "No HR data — score estimated from pace, mileage and experience.",
+        : "No HR data - score estimated from pace, mileage and experience.",
       trend:           std < 0.4 ? "Consistent" : "Variable",
       engine:          "formula fallback",
       hrMode,
@@ -356,7 +346,7 @@ router.get("/efficiency", async (req, res) => {
   }
 });
 
-// ─── RECENT RUNS ──────────────────────────────────────────────────────────────
+// RECENT RUNS
 router.get("/recent-runs", async (req, res) => {
   try {
     const limit      = parseInt(req.query.limit) || 10;
@@ -375,15 +365,15 @@ router.get("/recent-runs", async (req, res) => {
       const duration = h > 0 ? `${h}:${m}:${s}` : `${m}:${s}`;
 
       return {
-        name:        run.name,
-        date:        run.start_date,
-        distanceKm:  distanceKm.toFixed(2),
-        pace:        `${paceMin}:${paceSec}/km`,
+        name:      run.name,
+        date:      run.start_date,
+        distanceKm: distanceKm.toFixed(2),
+        pace:      `${paceMin}:${paceSec}/km`,
         duration,
-        heartrate:   run.average_heartrate || null,
-        cadence:     run.average_cadence   || null,
-        elevation:   run.total_elevation_gain || 0,
-        type:        run.type
+        heartrate: run.average_heartrate || null,
+        cadence:   run.average_cadence   || null,
+        elevation: run.total_elevation_gain || 0,
+        type:      run.type
       };
     });
 

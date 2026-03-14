@@ -20,12 +20,19 @@ function RouteListPage({ onSelectRoute }) {
       });
   }, []);
 
+  const PageHeader = ({ subtitle }) => (
+    <div className="rc-header">
+      <div className="home-greeting">
+        Route <span>Comparison.</span>
+      </div>
+      {subtitle && <div className="home-date">{subtitle}</div>}
+    </div>
+  );
+
   if (loading) {
     return (
       <div className="rc-page">
-        <div className="rc-header">
-          <h1>Route Comparison</h1>
-        </div>
+        <PageHeader />
         <div className="rc-loading">Loading your routes...</div>
       </div>
     );
@@ -34,7 +41,7 @@ function RouteListPage({ onSelectRoute }) {
   if (error) {
     return (
       <div className="rc-page">
-        <div className="rc-header"><h1>Route Comparison</h1></div>
+        <PageHeader />
         <div className="rc-error">{error}</div>
       </div>
     );
@@ -43,7 +50,7 @@ function RouteListPage({ onSelectRoute }) {
   if (routes.length === 0) {
     return (
       <div className="rc-page">
-        <div className="rc-header"><h1>Route Comparison</h1></div>
+        <PageHeader />
         <div className="rc-empty">
           <p>No repeated routes found yet.</p>
           <p>Run the same starting location at least twice and sync Strava to see comparisons.</p>
@@ -54,12 +61,9 @@ function RouteListPage({ onSelectRoute }) {
 
   return (
     <div className="rc-page">
-      <div className="rc-header">
-        <h1>Route Comparison</h1>
-        <p className="rc-subtitle">
-          {routes.length} repeated route{routes.length !== 1 ? "s" : ""} found — sorted by most runs
-        </p>
-      </div>
+      <PageHeader
+        subtitle={`${routes.length} repeated route${routes.length !== 1 ? "s" : ""} found — sorted by most runs`}
+      />
 
       <div className="rc-route-list">
         {routes.map((route, idx) => {
