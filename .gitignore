@@ -1,0 +1,13 @@
+node_modules/
+frontend/node_modules/
+Backend/node_modules/
+ml/.venv/
+ml/__pycache__/
+*.pyc
+.env
+Backend/.env
+ml/model.pkl
+ml/efficiency_model.pkl
+ml/train.csv
+ml/test.csv
+frontend/build/
