@@ -192,8 +192,6 @@ function TrainingLoadCard({ training }) {
     },
   ];
 
-  // const activeZone = zones.find(z => z.key === zone);
-
   const statusMessages = {
     low:     { title: "You're running less than usual", body: "Safe to increase your weekly mileage by 10–15% this week without injury risk.", color: "#0C447C", bg: "#E6F1FB", dot: "#378ADD" },
     optimal: { title: "Your training load is just right", body: "You're in the sweet spot. Keep this rhythm to build fitness safely.", color: "#27500A", bg: "#EAF3DE", dot: "#639922" },
@@ -349,20 +347,13 @@ function Home() {
   const weekRuns = getThisWeekRuns(recentRuns);
   const weekKm   = weekRuns.reduce((s, r) => s + parseFloat(r.distanceKm), 0).toFixed(1);
 
-  const today = new Date().toLocaleDateString("en-US", {
-    weekday: "long", month: "long", day: "numeric"
-  });
-
   return (
-    <div className="home-page">
+    <div className="home-page" style={{ paddingTop: 0 }}>
 
-      {/* Header */}
-      <div className="home-header">
-        <div className="home-greeting">{today}</div>
-      </div>
+
 
       {/* Main layout */}
-      <div className="home-layout">
+      <div className="home-layout" style={{ alignItems: "flex-start" }}>
 
         {/* LEFT — This week's runs */}
         <div className="week-runs-panel">
@@ -407,10 +398,10 @@ function Home() {
         </div>
 
         {/* RIGHT — stat panels */}
-        <div className="home-right">
+        <div className="home-right" style={{ marginTop: 0, paddingTop: 0 }}>
 
           {/* All time summary */}
-          <div className="summary-card">
+          <div className="summary-card" style={{ marginTop: 0 }}>
             <div className="summary-card-title">All Time</div>
             <div className="summary-stats">
               <div className="summary-stat">
