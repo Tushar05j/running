@@ -21,7 +21,7 @@ const RECORDS = [
   },
 ];
 
-function Login({ onGuestLogin }) {
+function Login({ onGuestLogin, guestLoading, wakeMsg }) {
   const connectStrava = () => {
     window.location.href = "https://paceiq.onrender.com/auth/strava";
   };
@@ -52,9 +52,21 @@ function Login({ onGuestLogin }) {
           <div className="login-divider">or</div>
 
           {/* Guest login */}
-          <button className="guest-btn" onClick={onGuestLogin}>
-            View as Guest
+          <button
+            className="guest-btn"
+            onClick={onGuestLogin}
+            disabled={guestLoading}
+            style={{ opacity: guestLoading ? 0.7 : 1 }}
+          >
+            {guestLoading ? "Connecting..." : "View as Guest"}
           </button>
+
+          {/* Wake up message */}
+          {wakeMsg && (
+            <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 8, textAlign: "center" }}>
+              {wakeMsg}
+            </p>
+          )}
 
           <p className="login-note" style={{ marginTop: 12 }}>
             Guest mode shows a real runner's data — no login needed.
@@ -70,7 +82,6 @@ function Login({ onGuestLogin }) {
           {RECORDS.map((rec) => (
             <div key={rec.distance} className="record-item">
               <div className="record-distance">{rec.distance}</div>
-
               <div className="record-info">
                 <div className="record-name">{rec.wr.holder}</div>
                 <div className="record-holder">
@@ -80,7 +91,6 @@ function Login({ onGuestLogin }) {
                   🇮🇳 India: {rec.india.time} — {rec.india.holder}
                 </div>
               </div>
-
               <div className="record-time">{rec.wr.time}</div>
             </div>
           ))}

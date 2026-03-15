@@ -10,6 +10,8 @@ import Navbar             from "./components/Navbar";
 import RouteComparisonApp from "./components/RouteComparisonApp";
 import Prediction         from "./pages/Prediction";
 
+const API = "https://paceiq.onrender.com";
+
 // ─── INNER APP ────────────────────────────────────────────────────────────────
 function AppContent({ onLogout, isGuest }) {
   const navigate = useNavigate();
@@ -52,25 +54,30 @@ function AppContent({ onLogout, isGuest }) {
 
 // ─── ROOT APP ─────────────────────────────────────────────────────────────────
 function App() {
-  const [appState,   setAppState]   = useState("loading");
-  const [isGuest,    setIsGuest]    = useState(false);
-  const [loggingOut, setLoggingOut] = useState(false);
-  const [syncing,    setSyncing]    = useState(false);
+  const [appState,      setAppState]      = useState("loading");
+  const [isGuest,       setIsGuest]       = useState(false);
+  const [loggingOut,    setLoggingOut]    = useState(false);
+  const [syncing,       setSyncing]       = useState(false);
+  const [guestLoading,  setGuestLoading]  = useState(false);
+  const [wakeMsg,       setWakeMsg]       = useState("");
 
-  // ── Run IMMEDIATELY on mount — before loading screen even shows ───────────
+  // ── Wake up Render on mount ───────────────────────────────────────────────
+  useEffect(() => {
+    // Ping backend immediately so it starts waking up
+    fetch(`${API}/`).catch(() => {});
+  }, []);
+
+  // ── Handle Strava redirect ────────────────────────────────────────────────
   useEffect(() => {
     const params     = new URLSearchParams(window.location.search);
     const fromStrava = params.get("strava") === "connected";
 
     if (fromStrava) {
-      // Clean URL right away
       window.history.replaceState({}, "", "/");
-      // Set syncing state so we show a syncing message
       setSyncing(true);
 
-      // Sync then go to app
-      fetch("https://paceiq.onrender.com/api/strava/activities")
-        .then(() => fetch("https://paceiq.onrender.com/api/analytics/dashboard"))
+      fetch(`${API}/api/strava/activities`)
+        .then(() => fetch(`${API}/api/analytics/dashboard`))
         .then(res => res.json())
         .then(data => {
           setSyncing(false);
@@ -81,15 +88,13 @@ function App() {
           setAppState("login");
         });
     }
-  }, []); // runs once on mount
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Loading screen complete — normal app start ────────────────────────────
+  // ── Loading screen complete ───────────────────────────────────────────────
   const handleLoadingComplete = async () => {
-    // If we're already handling a strava redirect, don't interfere
     if (syncing) return;
-
     try {
-      const res  = await fetch("https://paceiq.onrender.com/api/analytics/dashboard");
+      const res  = await fetch(`${API}/api/analytics/dashboard`);
       const data = await res.json();
       setAppState(data.totalRuns > 0 ? "app" : "login");
     } catch {
@@ -97,19 +102,41 @@ function App() {
     }
   };
 
-  // ── Guest login ────────────────────────────────────────────────────────────
+  // ── Guest login with wake-up retry ───────────────────────────────────────
   const handleGuestLogin = async () => {
-    try {
-      const res  = await fetch("https://paceiq.onrender.com/api/analytics/dashboard");
-      const data = await res.json();
-      if (data.totalRuns > 0) {
-        setIsGuest(true);
-        setAppState("app");
-      } else {
-        alert("No data available for guest mode yet. Please sync Strava first.");
+    setGuestLoading(true);
+    setWakeMsg("Connecting to server...");
+
+    // Try up to 3 times with delay (handles Render cold start)
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        if (attempt > 1) {
+          setWakeMsg(`Server is waking up... (${attempt}/3)`);
+          await new Promise(r => setTimeout(r, 5000)); // wait 5 sec between retries
+        }
+
+        const res  = await fetch(`${API}/api/analytics/dashboard`);
+        const data = await res.json();
+
+        if (data.totalRuns > 0) {
+          setIsGuest(true);
+          setGuestLoading(false);
+          setWakeMsg("");
+          setAppState("app");
+          return;
+        } else {
+          setGuestLoading(false);
+          setWakeMsg("");
+          alert("No data available for guest mode yet.");
+          return;
+        }
+      } catch (err) {
+        if (attempt === 3) {
+          setGuestLoading(false);
+          setWakeMsg("");
+          alert("Server is taking too long to wake up. Please try again in 30 seconds.");
+        }
       }
-    } catch {
-      alert("Could not connect to server. Make sure the backend is running.");
     }
   };
 
@@ -122,7 +149,7 @@ function App() {
     }
     setLoggingOut(true);
     try {
-      await fetch("https://paceiq.onrender.com/api/strava/logout", { method: "POST" });
+      await fetch(`${API}/api/strava/logout`, { method: "POST" });
     } catch (err) {
       console.log("Backend logout error:", err.message);
     } finally {
@@ -134,17 +161,13 @@ function App() {
     }
   };
 
-  // ── Syncing overlay (shown while importing Strava data after OAuth) ────────
+  // ── Syncing overlay ────────────────────────────────────────────────────────
   if (syncing) {
     return (
       <div style={{
-        display:        "flex",
-        flexDirection:  "column",
-        alignItems:     "center",
-        justifyContent: "center",
-        minHeight:      "100vh",
-        background:     "var(--bg-1)",
-        gap:            16,
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        minHeight: "100vh", background: "var(--bg-1)", gap: 16,
       }}>
         <div style={{ fontSize: 28, fontWeight: 700, color: "var(--primary)" }}>
           PACE<span style={{ color: "var(--text-primary)" }}>IQ</span>
@@ -152,27 +175,13 @@ function App() {
         <p style={{ color: "var(--text-muted)", fontSize: 14, marginTop: 8 }}>
           Importing your Strava runs...
         </p>
-        <div style={{
-          width: 200,
-          height: 4,
-          background: "var(--border)",
-          borderRadius: 2,
-          overflow: "hidden",
-        }}>
+        <div style={{ width: 200, height: 4, background: "var(--border)", borderRadius: 2, overflow: "hidden" }}>
           <div style={{
-            height: "100%",
-            width: "60%",
-            background: "var(--primary)",
-            borderRadius: 2,
-            animation: "slide 1.2s ease-in-out infinite",
+            height: "100%", width: "60%", background: "var(--primary)",
+            borderRadius: 2, animation: "slide 1.2s ease-in-out infinite",
           }} />
         </div>
-        <style>{`
-          @keyframes slide {
-            0%   { transform: translateX(-100%) }
-            100% { transform: translateX(300%) }
-          }
-        `}</style>
+        <style>{`@keyframes slide { 0%{transform:translateX(-100%)} 100%{transform:translateX(300%)} }`}</style>
       </div>
     );
   }
@@ -181,13 +190,8 @@ function App() {
   if (loggingOut) {
     return (
       <div style={{
-        display:        "flex",
-        flexDirection:  "column",
-        alignItems:     "center",
-        justifyContent: "center",
-        minHeight:      "100vh",
-        background:     "var(--bg-1)",
-        gap:            16,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        minHeight: "100vh", background: "var(--bg-1)",
       }}>
         <p style={{ color: "var(--text-muted)", fontSize: 14 }}>Logging out...</p>
       </div>
@@ -199,7 +203,13 @@ function App() {
   }
 
   if (appState === "login") {
-    return <Login onGuestLogin={handleGuestLogin} />;
+    return (
+      <Login
+        onGuestLogin={handleGuestLogin}
+        guestLoading={guestLoading}
+        wakeMsg={wakeMsg}
+      />
+    );
   }
 
   return (
