@@ -1,11 +1,15 @@
 import { useState } from "react";
 import axios from "axios";
 
-function Navbar({ currentPage, onNavigate, onLogout }) {
+function Navbar({ currentPage, onNavigate, onLogout, isGuest }) {
   const [syncing, setSyncing] = useState(false);
   const [toast, setToast]     = useState(null);
 
   const syncStrava = async () => {
+    if (isGuest) {
+      showToast("Guest mode — sync not available", "error");
+      return;
+    }
     setSyncing(true);
     try {
       const res = await axios.get("http://localhost:5000/api/strava/activities");
@@ -33,6 +37,7 @@ function Navbar({ currentPage, onNavigate, onLogout }) {
   return (
     <>
       <nav className="navbar">
+
         {/* Logo */}
         <div
           className="navbar-logo"
@@ -58,26 +63,37 @@ function Navbar({ currentPage, onNavigate, onLogout }) {
         {/* Right side */}
         <div className="navbar-right">
 
-          {/* Sync */}
-          <button
-            className="navbar-sync"
-            onClick={syncStrava}
-            disabled={syncing}
-          >
-            {syncing ? "Syncing..." : "↻ Sync"}
-          </button>
+          {/* Guest badge */}
+          {isGuest && (
+            <div className="guest-badge">
+              Guest
+            </div>
+          )}
 
-          {/* Logout */}
+          {/* Sync — hidden for guest */}
+          {!isGuest && (
+            <button
+              className="navbar-sync"
+              onClick={syncStrava}
+              disabled={syncing}
+            >
+              {syncing ? "Syncing..." : "↻ Sync"}
+            </button>
+          )}
+
+          {/* Logout / Exit guest */}
           <button
             className="navbar-logout"
             onClick={onLogout}
-            title="Log out"
+            title={isGuest ? "Exit guest mode" : "Log out"}
           >
-            ⎋ Logout
+            {isGuest ? "← Exit Guest" : "⎋ Logout"}
           </button>
 
-          {/* Avatar */}
-          <div className="navbar-avatar-placeholder">R</div>
+          {/* Avatar — show G for guest */}
+          <div className="navbar-avatar-placeholder">
+            {isGuest ? "G" : "R"}
+          </div>
 
         </div>
       </nav>

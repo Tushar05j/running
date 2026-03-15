@@ -1,28 +1,27 @@
-// World Records and Indian Records for major distances
 const RECORDS = [
   {
     distance: "5K",
-    wr: { time: "12:35", holder: "Joshua Cheptegei", country: "Uganda", year: 2020 },
+    wr:    { time: "12:35", holder: "Joshua Cheptegei", country: "Uganda", year: 2020 },
     india: { time: "13:18", holder: "Avinash Sable", year: 2021 }
   },
   {
     distance: "10K",
-    wr: { time: "26:24", holder: "Joshua Cheptegei", country: "Uganda", year: 2020 },
-    india: { time: "27:00", holder: "Gulveer Singh", year: 2022 }
+    wr:    { time: "26:24", holder: "Joshua Cheptegei", country: "Uganda", year: 2020 },
+    india: { time: "27:43", holder: "Avinash Sable", year: 2022 }
   },
   {
     distance: "Half",
-    wr: { time: "57:20", holder: "Jacob Kiplimo", country: "Uganda", year: 2026 },
+    wr:    { time: "57:31", holder: "Jacob Kiplimo", country: "Uganda", year: 2021 },
     india: { time: "1:00:30", holder: "Avinash Sable", year: 2023 }
   },
   {
     distance: "Marathon",
-    wr: { time: "2:00:35", holder: "Kelvin Kiptum", country: "Kenya", year: 2023 },
-    india: { time: "2:12:00", holder: "Shivnath Singh", year: 1978 }
+    wr:    { time: "2:00:35", holder: "Kelvin Kiptum", country: "Kenya", year: 2023 },
+    india: { time: "2:12:10", holder: "Tata Mumbai", year: 2023 }
   },
 ];
 
-function Login() {
+function Login({ onGuestLogin }) {
   const connectStrava = () => {
     window.location.href = "http://localhost:5000/auth/strava";
   };
@@ -42,8 +41,8 @@ function Login() {
             running dashboard, race predictions, and AI coaching.
           </p>
 
+          {/* Strava login */}
           <button className="strava-btn" onClick={connectStrava}>
-            {/* Strava logo SVG */}
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
               <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0 3 13.828h4.172"/>
             </svg>
@@ -52,9 +51,13 @@ function Login() {
 
           <div className="login-divider">or</div>
 
-          <p className="login-note">
-            Don't have Strava? Your runs are automatically imported
-            once you connect. All data stays private.
+          {/* Guest login */}
+          <button className="guest-btn" onClick={onGuestLogin}>
+            View as Guest
+          </button>
+
+          <p className="login-note" style={{ marginTop: 12 }}>
+            Guest mode shows a real runner's data — no login needed.
           </p>
         </div>
       </div>

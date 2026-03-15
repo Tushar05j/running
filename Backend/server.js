@@ -79,7 +79,7 @@ app.get("/auth/strava/callback", async (req, res) => {
     process.env.STRAVA_REFRESH_TOKEN = refreshToken;
 
     // Redirect back to React app — it will detect totalRuns and show dashboard
-    res.redirect("http://localhost:3000");
+    res.redirect("http://localhost:3000?strava=connected");
 
   } catch (err) {
     console.error("Strava callback error:", err.response?.data || err.message);

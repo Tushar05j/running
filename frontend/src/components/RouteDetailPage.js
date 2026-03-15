@@ -229,10 +229,12 @@ function RouteDetailPage({ routeId, onBack }) {
 
       <div className="rc-detail-header">
         <div>
-          <h1>Route {routeId} Analysis</h1>
-          <p className="rc-subtitle">
+          <div className="home-greeting">
+            Route {routeId} <span>Analysis.</span>
+          </div>
+          <div className="home-date">
             {data.totalRuns} runs · {data.centerLat}°, {data.centerLon}°
-          </p>
+          </div>
         </div>
         <div className={`rc-trend-badge ${
           summary.paceSlope < -0.01 ? "rc-positive" : summary.paceSlope > 0.01 ? "rc-negative" : ""
