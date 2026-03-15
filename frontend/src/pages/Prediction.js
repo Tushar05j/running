@@ -20,7 +20,7 @@ function Prediction() {
         ? { city: city.trim(), is_big_race: isBigRace }
         : { is_big_race: isBigRace };
 
-      const response = await axios.post("https://running-orpin.vercel.app/api/predict", body);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/predict`, body);
       setResult(response.data);
     } catch (err) {
       setError(err.response?.data?.error || "Prediction failed. Try again.");
