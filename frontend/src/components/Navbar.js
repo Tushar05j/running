@@ -12,7 +12,7 @@ function Navbar({ currentPage, onNavigate, onLogout, isGuest }) {
     }
     setSyncing(true);
     try {
-      const res = await axios.get("http://localhost:5000/api/strava/activities");
+      const res = await axios.get("https://paceiq.onrender.com/api/strava/activities");
       showToast(`✓ Synced ${res.data.count} activities`, "success");
       window.dispatchEvent(new Event("strava-synced"));
     } catch {

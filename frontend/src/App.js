@@ -69,8 +69,8 @@ function App() {
       setSyncing(true);
 
       // Sync then go to app
-      fetch("http://localhost:5000/api/strava/activities")
-        .then(() => fetch("http://localhost:5000/api/analytics/dashboard"))
+      fetch("https://paceiq.onrender.com/api/strava/activities")
+        .then(() => fetch("https://paceiq.onrender.com/api/analytics/dashboard"))
         .then(res => res.json())
         .then(data => {
           setSyncing(false);
@@ -89,7 +89,7 @@ function App() {
     if (syncing) return;
 
     try {
-      const res  = await fetch("http://localhost:5000/api/analytics/dashboard");
+      const res  = await fetch("https://paceiq.onrender.com/api/analytics/dashboard");
       const data = await res.json();
       setAppState(data.totalRuns > 0 ? "app" : "login");
     } catch {
@@ -100,7 +100,7 @@ function App() {
   // ── Guest login ────────────────────────────────────────────────────────────
   const handleGuestLogin = async () => {
     try {
-      const res  = await fetch("http://localhost:5000/api/analytics/dashboard");
+      const res  = await fetch("https://paceiq.onrender.com/api/analytics/dashboard");
       const data = await res.json();
       if (data.totalRuns > 0) {
         setIsGuest(true);
@@ -122,7 +122,7 @@ function App() {
     }
     setLoggingOut(true);
     try {
-      await fetch("http://localhost:5000/api/strava/logout", { method: "POST" });
+      await fetch("https://paceiq.onrender.com/api/strava/logout", { method: "POST" });
     } catch (err) {
       console.log("Backend logout error:", err.message);
     } finally {

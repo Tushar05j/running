@@ -23,7 +23,7 @@ const RECORDS = [
 
 function Login({ onGuestLogin }) {
   const connectStrava = () => {
-    window.location.href = "http://localhost:5000/auth/strava";
+    window.location.href = "https://paceiq.onrender.com/auth/strava";
   };
 
   return (

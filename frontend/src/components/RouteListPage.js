@@ -9,7 +9,7 @@ function RouteListPage({ onSelectRoute }) {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/routes")
+      .get("https://paceiq.onrender.com/api/routes")
       .then((res) => {
         setRoutes(res.data.routes);
         setLoading(false);

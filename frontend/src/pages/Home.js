@@ -314,10 +314,10 @@ function Home() {
   const fetchAll = async () => {
     try {
       const [dashRes, runsRes, loadRes, effRes] = await Promise.all([
-        axios.get("http://localhost:5000/api/analytics/dashboard"),
-        axios.get("http://localhost:5000/api/analytics/recent-runs?limit=30"),
-        axios.get("http://localhost:5000/api/analytics/training-load"),
-        axios.get("http://localhost:5000/api/analytics/efficiency"),
+        axios.get("https://paceiq.onrender.com/api/analytics/dashboard"),
+        axios.get("https://paceiq.onrender.com/api/analytics/recent-runs?limit=30"),
+        axios.get("https://paceiq.onrender.com/api/analytics/training-load"),
+        axios.get("https://paceiq.onrender.com/api/analytics/efficiency"),
       ]);
       setDashboard(dashRes.data);
       setRecentRuns(runsRes.data);

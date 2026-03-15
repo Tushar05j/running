@@ -20,7 +20,7 @@ function Prediction() {
         ? { city: city.trim(), is_big_race: isBigRace }
         : { is_big_race: isBigRace };
 
-      const response = await axios.post("http://localhost:5000/api/predict", body);
+      const response = await axios.post("https://paceiq.onrender.com/api/predict", body);
       setResult(response.data);
     } catch (err) {
       setError(err.response?.data?.error || "Prediction failed. Try again.");
