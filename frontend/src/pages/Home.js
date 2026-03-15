@@ -192,7 +192,7 @@ function TrainingLoadCard({ training }) {
     },
   ];
 
-  const activeZone = zones.find(z => z.key === zone);
+  // const activeZone = zones.find(z => z.key === zone);
 
   const statusMessages = {
     low:     { title: "You're running less than usual", body: "Safe to increase your weekly mileage by 10–15% this week without injury risk.", color: "#0C447C", bg: "#E6F1FB", dot: "#378ADD" },

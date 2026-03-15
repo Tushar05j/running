@@ -47,7 +47,7 @@ function MonthCompareCard({ label, thisMonth, lastMonth, unit }) {
   const diff      = parseFloat(thisMonth) - parseFloat(lastMonth);
   const pct       = lastMonth > 0 ? ((diff / lastMonth) * 100).toFixed(0) : 0;
   const improved  = diff >= 0;
-  const isTime    = unit === "h";
+  // const isTime    = unit === "h";
 
   return (
     <div className="card" style={{ flex: 1, minWidth: 0 }}>

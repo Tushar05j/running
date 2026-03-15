@@ -12,20 +12,20 @@ function LoadingScreen({ onComplete }) {
     "Ready to run!",
   ];
 
-  useEffect(() => {
-    let current = 0;
-    const interval = setInterval(() => {
-      current += Math.random() * 18 + 8;
-      if (current >= 100) {
-        current = 100;
-        clearInterval(interval);
-        setTimeout(() => onComplete && onComplete(), 500);
-      }
-      setProgress(Math.min(current, 100));
-      setMessage(messages[Math.floor((current / 100) * (messages.length - 1))]);
-    }, 280);
-    return () => clearInterval(interval);
-  }, []);
+useEffect(() => {
+  let current = 0;
+  const interval = setInterval(() => {
+    current += Math.random() * 18 + 8;
+    if (current >= 100) {
+      current = 100;
+      clearInterval(interval);
+      setTimeout(() => onComplete && onComplete(), 500);
+    }
+    setProgress(Math.min(current, 100));
+    setMessage(messages[Math.floor((current / 100) * (messages.length - 1))]);
+  }, 280);
+  return () => clearInterval(interval);
+}, [messages, onComplete]);  // ← just add these two
 
   return (
     <div className="loading-screen">
