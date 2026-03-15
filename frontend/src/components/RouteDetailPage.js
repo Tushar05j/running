@@ -180,7 +180,7 @@ function RouteDetailPage({ routeId, onBack }) {
     setLoading(true);
     setError(null);
     axios
-      .get(`https://paceiq.onrender.com/api/routes/${routeId}`)
+      .get(`https://running-orpin.vercel.app/api/routes/${routeId}`)
       .then((res) => { setData(res.data); setLoading(false); })
       .catch(() => { setError("Could not load route data."); setLoading(false); });
   }, [routeId]);
