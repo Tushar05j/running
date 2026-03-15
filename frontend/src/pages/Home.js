@@ -314,10 +314,10 @@ function Home() {
   const fetchAll = async () => {
     try {
       const [dashRes, runsRes, loadRes, effRes] = await Promise.all([
-        axios.get("https://paceiq.onrender.com/api/analytics/dashboard"),
-        axios.get("https://paceiq.onrender.com/api/analytics/recent-runs?limit=30"),
-        axios.get("https://paceiq.onrender.com/api/analytics/training-load"),
-        axios.get("https://paceiq.onrender.com/api/analytics/efficiency"),
+        axios.get("https://running-orpin.vercel.app/api/analytics/dashboard"),
+        axios.get("https://running-orpin.vercel.app/api/analytics/recent-runs?limit=30"),
+        axios.get("https://running-orpin.vercel.app/api/analytics/training-load"),
+        axios.get("https://running-orpin.vercel.app/api/analytics/efficiency"),
       ]);
       setDashboard(dashRes.data);
       setRecentRuns(runsRes.data);

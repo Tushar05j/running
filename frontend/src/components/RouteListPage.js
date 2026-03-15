@@ -9,7 +9,7 @@ function RouteListPage({ onSelectRoute }) {
 
   useEffect(() => {
     axios
-      .get("https://paceiq.onrender.com/api/routes")
+      .get("https://running-orpin.vercel.app/api/routes")
       .then((res) => {
         setRoutes(res.data.routes);
         setLoading(false);

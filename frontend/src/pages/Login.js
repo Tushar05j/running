@@ -23,7 +23,7 @@ const RECORDS = [
 
 function Login({ onGuestLogin, guestLoading, wakeMsg }) {
   const connectStrava = () => {
-    window.location.href = "https://paceiq.onrender.com/auth/strava";
+    window.location.href = "https://running-orpin.vercel.app/auth/strava";
   };
 
   return (

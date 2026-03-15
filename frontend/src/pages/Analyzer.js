@@ -119,9 +119,9 @@ function Analyzer() {
   const fetchData = async () => {
     try {
       const [weeklyRes, paceRes, dashRes] = await Promise.all([
-        axios.get("https://paceiq.onrender.com/api/analytics/weekly-mileage"),
-        axios.get("https://paceiq.onrender.com/api/analytics/pace-trend"),
-        axios.get("https://paceiq.onrender.com/api/analytics/dashboard"),
+        axios.get("https://running-orpin.vercel.app/api/analytics/weekly-mileage"),
+        axios.get("https://running-orpin.vercel.app/api/analytics/pace-trend"),
+        axios.get("https://running-orpin.vercel.app/api/analytics/dashboard"),
       ]);
 
       const weekly = weeklyRes.data;
@@ -196,7 +196,7 @@ function Analyzer() {
   const generateSummary = async () => {
     setSummaryLoading(true);
     try {
-      const res = await axios.get("https://paceiq.onrender.com/api/ai/summarize");
+      const res = await axios.get("https://running-orpin.vercel.app/api/ai/summarize");
       setSummary(res.data.summary);
     } catch {
       setSummary("Could not generate summary. Check your API key.");

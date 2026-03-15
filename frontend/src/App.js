@@ -10,7 +10,7 @@ import Navbar             from "./components/Navbar";
 import RouteComparisonApp from "./components/RouteComparisonApp";
 import Prediction         from "./pages/Prediction";
 
-const API = "https://paceiq.onrender.com";
+const API = "https://running-orpin.vercel.app";
 
 // ─── INNER APP ────────────────────────────────────────────────────────────────
 function AppContent({ onLogout, isGuest }) {

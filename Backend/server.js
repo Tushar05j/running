@@ -35,7 +35,7 @@ app.get("/auth/strava", (req, res) => {
   const redirectUrl =
     `https://www.strava.com/oauth/authorize?client_id=${clientId}` +
     `&response_type=code` +
-    `&redirect_uri=https://paceiq-backend.vercel.app/auth/strava/callback` +
+    `&redirect_uri=https://running-orpin.vercel.app/auth/strava/callback` +
     `&approval_prompt=force` +
     `&scope=read,activity:read`;
   res.redirect(redirectUrl);
