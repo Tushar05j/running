@@ -348,9 +348,12 @@ function Home() {
   const weekKm   = weekRuns.reduce((s, r) => s + parseFloat(r.distanceKm), 0).toFixed(1);
 
   return (
-    <div className="home-page" style={{ paddingTop: 0 }}>
-
-
+    <div className="home-page" style={{ paddingTop: 80 }}>
+ <div className="home-header">
+  <div className="home-greeting">
+    Sunday, <span>15 March 2026</span>
+  </div>
+</div>
 
       {/* Main layout */}
       <div className="home-layout" style={{ alignItems: "flex-start" }}>
