@@ -298,8 +298,8 @@ function RouteDetailPage({ routeId, onBack }) {
       {activeTab === "pace" && (
         <>
           <ChartSection title="Pace over time" subtitle="Lower = faster.">
-            <ResponsiveContainer width="100%" height={320}>
-              <LineChart data={chartData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+            <ResponsiveContainer width="100%" height={260}>
+              <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#888" }} tickLine={false} />
                 <YAxis tickFormatter={formatPaceAxis} tick={{ fontSize: 11, fill: "#888" }} tickLine={false} axisLine={false} domain={["auto", "auto"]} />
@@ -324,8 +324,8 @@ function RouteDetailPage({ routeId, onBack }) {
 
           {hasHR && (
             <ChartSection title="Pace vs Heart Rate" subtitle="Same pace + lower HR = you're getting fitter.">
-              <ResponsiveContainer width="100%" height={280}>
-                <LineChart data={chartData} margin={{ top: 10, right: 50, left: 10, bottom: 5 }}>
+              <ResponsiveContainer width="100%" height={240}>
+                <LineChart data={chartData} margin={{ top: 10, right: 40, left: 0, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#888" }} tickLine={false} />
                   <YAxis yAxisId="pace" tickFormatter={formatPaceAxis} tick={{ fontSize: 11, fill: "#e86d2e" }} tickLine={false} axisLine={false} domain={["auto", "auto"]} />
@@ -343,8 +343,8 @@ function RouteDetailPage({ routeId, onBack }) {
 
       {activeTab === "distance" && (
         <ChartSection title="Distance per run">
-          <ResponsiveContainer width="100%" height={320}>
-            <BarChart data={chartData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#888" }} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: "#888" }} tickLine={false} axisLine={false} unit=" km" />
@@ -370,8 +370,8 @@ function RouteDetailPage({ routeId, onBack }) {
 
       {activeTab === "heartrate" && hasHR && (
         <ChartSection title="Heart rate over time" subtitle="If pace stays similar but HR drops, your fitness is improving.">
-          <ResponsiveContainer width="100%" height={320}>
-            <LineChart data={chartData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#888" }} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: "#888" }} tickLine={false} axisLine={false} unit=" bpm" domain={["auto", "auto"]} />
@@ -397,8 +397,8 @@ function RouteDetailPage({ routeId, onBack }) {
 
       {activeTab === "cadence" && hasCadence && (
         <ChartSection title="Cadence over time" subtitle="Higher cadence generally means better running form.">
-          <ResponsiveContainer width="100%" height={320}>
-            <LineChart data={chartData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
               <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#888" }} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: "#888" }} tickLine={false} axisLine={false} unit=" spm" domain={["auto", "auto"]} />
@@ -424,36 +424,38 @@ function RouteDetailPage({ routeId, onBack }) {
 
       {activeTab === "table" && (
         <ChartSection title="All runs on this route">
-          <table className="rc-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Date</th>
-                <th>Name</th>
-                <th>Distance</th>
-                <th>Pace</th>
-                <th>Duration</th>
-                {hasHR && <th>HR</th>}
-                {hasCadence && <th>Cadence</th>}
-                {runs.some(r => r.elevation) && <th>Elevation</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {runs.map((run, i) => (
-                <tr key={i}>
-                  <td className="rc-table-num">{i + 1}</td>
-                  <td>{run.dateFormatted}</td>
-                  <td>{run.name}</td>
-                  <td>{run.distanceKm} km</td>
-                  <td className={run.paceDecimal === Math.min(...runs.map(r => r.paceDecimal)) ? "rc-best" : ""}>{run.paceFormatted}/km</td>
-                  <td>{run.duration}</td>
-                  {hasHR && <td>{run.heartrate ? `${run.heartrate} bpm` : "—"}</td>}
-                  {hasCadence && <td>{run.cadence ? `${run.cadence} spm` : "—"}</td>}
-                  {runs.some(r => r.elevation) && <td>{run.elevation ? `+${run.elevation}m` : "—"}</td>}
+          <div className="rc-table-scroll">
+            <table className="rc-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Date</th>
+                  <th>Name</th>
+                  <th>Distance</th>
+                  <th>Pace</th>
+                  <th>Duration</th>
+                  {hasHR && <th>HR</th>}
+                  {hasCadence && <th>Cadence</th>}
+                  {runs.some(r => r.elevation) && <th>Elevation</th>}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {runs.map((run, i) => (
+                  <tr key={i}>
+                    <td className="rc-table-num">{i + 1}</td>
+                    <td>{run.dateFormatted}</td>
+                    <td>{run.name}</td>
+                    <td>{run.distanceKm} km</td>
+                    <td className={run.paceDecimal === Math.min(...runs.map(r => r.paceDecimal)) ? "rc-best" : ""}>{run.paceFormatted}/km</td>
+                    <td>{run.duration}</td>
+                    {hasHR && <td>{run.heartrate ? `${run.heartrate} bpm` : "—"}</td>}
+                    {hasCadence && <td>{run.cadence ? `${run.cadence} spm` : "—"}</td>}
+                    {runs.some(r => r.elevation) && <td>{run.elevation ? `+${run.elevation}m` : "—"}</td>}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </ChartSection>
       )}
     </div>

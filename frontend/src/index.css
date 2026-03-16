@@ -1091,15 +1091,439 @@ input, textarea, select { font-family: var(--font-body); }
   border-bottom-color: var(--primary);
 }
 
+/* ─── HAMBURGER (hidden on desktop) ─────────────────────────────── */
+.navbar-hamburger {
+  display: none;
+}
+
+.navbar-mobile-menu {
+  display: none;
+}
+
+.navbar-mobile-guest-badge {
+  display: none;
+}
+
 /* ─── RESPONSIVE ─────────────────────────────────────────────────── */
+
+/* ── TABLET (≤ 1024px) ─────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .home-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .home-right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .analyzer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .login-left {
+    padding: 48px 48px;
+  }
+
+  .login-right {
+    padding: 48px 40px;
+  }
+}
+
+/* ── MOBILE (≤ 768px) ──────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .home-layout      { grid-template-columns: 1fr; }
-  .analyzer-grid    { grid-template-columns: 1fr; }
-  .login-page       { grid-template-columns: 1fr; }
-  .login-right      { display: none; }
-  .navbar           { padding: 0 16px; }
-  .home-page,
-  .analyzer-page    { padding: 72px 16px 24px; }
+
+  /* Navbar */
+  .navbar {
+    padding: 0 16px;
+    height: 56px;
+  }
+
+  .navbar-links {
+    display: none; /* hidden — replaced by mobile menu */
+  }
+
+  .navbar-sync {
+    display: none;
+  }
+
+  .navbar-logout {
+    display: none;
+  }
+
+  .navbar-avatar-placeholder {
+    display: none;
+  }
+
+  .guest-badge {
+    display: none;
+  }
+
+  /* Mobile hamburger button */
+  .navbar-hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .navbar-hamburger span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: all 0.25s ease;
+    transform-origin: center;
+  }
+
+  .navbar-hamburger.open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .navbar-hamburger.open span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  .navbar-hamburger.open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* Mobile drawer overlay */
+  .navbar-mobile-menu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 56px;
+    left: 0; right: 0;
+    background: rgba(253,246,238,0.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-bright);
+    box-shadow: 0 8px 32px rgba(180,120,60,0.12);
+    padding: 16px;
+    gap: 6px;
+    z-index: 99;
+    animation: slideDown 0.2s ease;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .navbar-mobile-menu .navbar-link {
+    width: 100%;
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: var(--radius-md);
+  }
+
+  .navbar-mobile-divider {
+    height: 1px;
+    background: var(--border-bright);
+    margin: 6px 0;
+  }
+
+  .navbar-mobile-actions {
+    display: flex;
+    gap: 8px;
+    padding: 4px 0 8px;
+  }
+
+  .navbar-mobile-actions .navbar-sync,
+  .navbar-mobile-actions .navbar-logout {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .navbar-mobile-guest-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: var(--primary-glow2);
+    color: var(--primary);
+    border: 1px solid var(--border-bright);
+    letter-spacing: 0.5px;
+    margin-left: 8px;
+  }
+
+  /* Pages */
+  .home-page {
+    padding: 68px 14px 24px;
+  }
+
+  .analyzer-page {
+    padding: 68px 14px 24px;
+  }
+
+  /* Home layout — stack everything */
+  .home-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .home-right {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .home-greeting {
+    font-size: 24px;
+  }
+
+  .week-runs-panel {
+    padding: 20px 16px;
+  }
+
+  /* Run cards — tighter on mobile */
+  .run-card {
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    padding: 12px 14px;
+  }
+
+  .run-card-day-num {
+    font-size: 22px;
+  }
+
+  .run-card-distance {
+    font-size: 18px;
+  }
+
+  /* Stats cards — 2 columns on mobile */
+  .summary-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* Analyzer stat row — wrap to 2 columns */
+  .analyzer-page > div[style*="display: flex"][style*="gap: 16px"]:first-of-type {
+    flex-wrap: wrap;
+  }
+
+  .analyzer-page .card[style*="flex: 1"] {
+    min-width: calc(50% - 8px);
+  }
+
+  /* Analyzer bottom row — stack */
+  .analyzer-page > div[style*="marginTop: 24px"] {
+    flex-direction: column;
+  }
+
+  /* AI summary header — stack on mobile */
+  .ai-summary-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  /* Login — single column */
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  .login-right {
+    display: none;
+  }
+
+  .login-left {
+    padding: 40px 24px;
+  }
+
+  .login-logo {
+    font-size: 40px;
+  }
+
+  .login-card {
+    padding: 28px 24px;
+  }
+
+  /* Loading screen */
+  .loading-logo {
+    font-size: 44px;
+  }
+
+  .loading-bar-wrap {
+    width: 240px;
+  }
+
+  /* Route pages */
+  .rc-page {
+    padding: 16px 14px;
+  }
+
+  .rc-header h1,
+  .home-greeting {
+    font-size: 22px;
+  }
+
+  .rc-route-card {
+    flex-wrap: wrap;
+    padding: 14px 16px;
+    gap: 10px;
+  }
+
+  .rc-route-stats {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .rc-stat {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .rc-badges {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .rc-summary-grid {
+    gap: 8px;
+  }
+
+  .rc-summary-card {
+    min-width: 80px;
+    padding: 12px 10px;
+  }
+
+  .rc-summary-value {
+    font-size: 18px;
+  }
+
+  .rc-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+    padding-bottom: 2px;
+  }
+
+  .rc-tabs::-webkit-scrollbar { display: none; }
+
+  .rc-tab {
+    white-space: nowrap;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  /* Detail page map */
+  .rc-map {
+    height: 220px;
+  }
+
+  /* Prediction card */
+  .prediction-card,
+  div[style*="maxWidth: 680"] {
+    padding: 28px 20px !important;
+    border-radius: 16px !important;
+  }
+
+  /* Prediction 2x2 grid → 1 column on very small screens */
+  div[style*="gridTemplateColumns: repeat(2, 1fr)"] {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* Toasts */
+  .sync-toast {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    text-align: center;
+  }
+
+  /* Charts container — reduce padding */
+  .rc-chart-section {
+    padding: 14px;
+  }
+
+  /* Route detail header — stack */
+  .rc-detail-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Table — horizontal scroll */
+  .rc-chart-section div[style*="overflow"] {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ── SMALL PHONES (≤ 480px) ─────────────────────────────────────── */
+@media (max-width: 480px) {
+
+  .home-greeting {
+    font-size: 20px;
+  }
+
+  /* Prediction buttons — stack */
+  div[style*="gridTemplateColumns: 1fr 1fr"][style*="gap: 12"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Prediction results — stack */
+  div[style*="gridTemplateColumns: repeat(2, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .rc-rank {
+    display: none;
+  }
+
+  .rc-route-stats {
+    flex-wrap: wrap;
+  }
+
+  .run-card {
+    grid-template-columns: auto 1fr;
+    gap: 8px;
+  }
+
+  .run-card-stats {
+    grid-column: 1 / -1;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .run-card-distance {
+    font-size: 20px;
+  }
+
+  .loading-logo {
+    font-size: 36px;
+  }
+
+  .login-left {
+    padding: 32px 20px;
+  }
+
+  .login-card {
+    padding: 24px 20px;
+  }
+
+  .navbar-logo {
+    font-size: 21px;
+    letter-spacing: 1px;
+  }
 }
 .navbar-logout {
   background: transparent;

@@ -2,8 +2,9 @@ import { useState } from "react";
 import axios from "axios";
 
 function Navbar({ currentPage, onNavigate, onLogout, isGuest }) {
-  const [syncing, setSyncing] = useState(false);
-  const [toast, setToast]     = useState(null);
+  const [syncing,  setSyncing]  = useState(false);
+  const [toast,    setToast]    = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const syncStrava = async () => {
     if (isGuest) {
@@ -27,6 +28,16 @@ function Navbar({ currentPage, onNavigate, onLogout, isGuest }) {
     setTimeout(() => setToast(null), 3000);
   };
 
+  const handleNavigate = (page) => {
+    onNavigate(page);
+    setMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    onLogout();
+    setMenuOpen(false);
+  };
+
   const links = [
     { key: "home",     label: "Home"     },
     { key: "analyzer", label: "Analyzer" },
@@ -41,36 +52,34 @@ function Navbar({ currentPage, onNavigate, onLogout, isGuest }) {
         {/* Logo */}
         <div
           className="navbar-logo"
-          onClick={() => onNavigate("home")}
+          onClick={() => handleNavigate("home")}
           style={{ cursor: "pointer" }}
         >
           PACE<span>IQ</span>
+          {isGuest && (
+            <span className="navbar-mobile-guest-badge">Guest</span>
+          )}
         </div>
 
-        {/* Nav links */}
+        {/* Desktop nav links */}
         <div className="navbar-links">
           {links.map(link => (
             <button
               key={link.key}
               className={`navbar-link ${currentPage === link.key ? "active" : ""}`}
-              onClick={() => onNavigate(link.key)}
+              onClick={() => handleNavigate(link.key)}
             >
               {link.label}
             </button>
           ))}
         </div>
 
-        {/* Right side */}
+        {/* Desktop right side */}
         <div className="navbar-right">
-
-          {/* Guest badge */}
           {isGuest && (
-            <div className="guest-badge">
-              Guest
-            </div>
+            <div className="guest-badge">Guest</div>
           )}
 
-          {/* Sync — hidden for guest */}
           {!isGuest && (
             <button
               className="navbar-sync"
@@ -81,22 +90,68 @@ function Navbar({ currentPage, onNavigate, onLogout, isGuest }) {
             </button>
           )}
 
-          {/* Logout / Exit guest */}
           <button
             className="navbar-logout"
-            onClick={onLogout}
+            onClick={handleLogout}
             title={isGuest ? "Exit guest mode" : "Log out"}
           >
             {isGuest ? "← Exit Guest" : "⎋ Logout"}
           </button>
 
-          {/* Avatar — show G for guest */}
           <div className="navbar-avatar-placeholder">
             {isGuest ? "G" : "R"}
           </div>
-
         </div>
+
+        {/* Mobile hamburger button */}
+        <button
+          className={`navbar-hamburger ${menuOpen ? "open" : ""}`}
+          onClick={() => setMenuOpen(v => !v)}
+          aria-label="Toggle menu"
+          aria-expanded={menuOpen}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
       </nav>
+
+      {/* Mobile dropdown menu */}
+      {menuOpen && (
+        <div className="navbar-mobile-menu">
+          {links.map(link => (
+            <button
+              key={link.key}
+              className={`navbar-link ${currentPage === link.key ? "active" : ""}`}
+              onClick={() => handleNavigate(link.key)}
+            >
+              {link.label}
+            </button>
+          ))}
+
+          <div className="navbar-mobile-divider" />
+
+          <div className="navbar-mobile-actions">
+            {!isGuest && (
+              <button
+                className="navbar-sync"
+                onClick={() => { syncStrava(); setMenuOpen(false); }}
+                disabled={syncing}
+                style={{ flex: 1 }}
+              >
+                {syncing ? "Syncing..." : "↻ Sync Strava"}
+              </button>
+            )}
+            <button
+              className="navbar-logout"
+              onClick={handleLogout}
+              style={{ flex: 1 }}
+            >
+              {isGuest ? "← Exit Guest" : "⎋ Logout"}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Toast */}
       {toast && (
